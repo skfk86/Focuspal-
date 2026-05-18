@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SCAM ALTMAN — $SCAM</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green: #10a37f;
+    --green-bright: #1eff9e;
+    --green-dim: #0a5c47;
+    --bg: #060d0a;
+    --slate: #0d1a14;
+    --card: #0f1f18;
+    --border: rgba(16,163,127,0.25);
+    --text: #c8ffe8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  #cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--green-bright);
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s;
+    box-shadow: 0 0 20px var(--green-bright), 0 0 50px var(--green);
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--green);
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.18s ease;
+    opacity: 0.5;
+  }
+
+  /* Neural net canvas */
+  #neural-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.45;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.06) 2px,
+      rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Noise grain */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: -200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+    animation: grainShift 0.4s steps(1) infinite;
+  }
+
+  @keyframes grainShift {
+    0%   { transform: translate(0,0); }
+    20%  { transform: translate(-3%,4%); }
+    40%  { transform: translate(5%,-2%); }
+    60%  { transform: translate(-4%,3%); }
+    80%  { transform: translate(3%,-5%); }
+    100% { transform: translate(0,0); }
+  }
+
+  /* Main layout */
+  .content { position: relative; z-index: 10; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(18px);
+    background: rgba(6,13,10,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 18px var(--green);
+  }
+  nav a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 2px;
+    padding: 0.4rem 1rem;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  nav a:hover {
+    border-color: var(--green);
+    color: var(--green-bright);
+    text-shadow: 0 0 12px var(--green);
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 1.5rem 4rem;
+    position: relative;
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    padding: 0.35rem 1.2rem;
+    border-radius: 2px;
+    background: rgba(16,163,127,0.06);
+    margin-bottom: 2.5rem;
+    display: inline-block;
+    text-shadow: 0 0 10px var(--green);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 0%, var(--green-bright) 40%, var(--green) 70%, #042e22 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 40px rgba(16,163,127,0.6));
+    margin-bottom: 0.3rem;
+  }
+
+  .hero-ticker {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: var(--green);
+    letter-spacing: 8px;
+    text-shadow: 0 0 20px var(--green);
+    margin-bottom: 2rem;
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 20px var(--green), 0 0 40px rgba(16,163,127,0.3); }
+    50% { text-shadow: 0 0 35px var(--green-bright), 0 0 70px rgba(30,255,158,0.4); }
+  }
+
+  .hero-sub {
+    font-size: clamp(0.95rem, 2.5vw, 1.25rem);
+    color: rgba(200,255,232,0.7);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 400;
+  }
+
+  .hero-sub em {
+    color: var(--green-bright);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 4rem;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    padding: 1rem 2.2rem;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 3px;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 0 25px rgba(16,163,127,0.5), 0 0 60px rgba(16,163,127,0.2);
+    text-transform: uppercase;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .btn-primary:hover::before { transform: translateX(100%); }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px rgba(16,163,127,0.8), 0 0 90px rgba(16,163,127,0.4);
+    transform: translateY(-2px);
+    background: var(--green-bright);
+  }
+
+  .btn-ghost {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    padding: 1rem 2.2rem;
+    background: transparent;
+    color: var(--green);
+    border: 1.5px solid var(--green);
+    border-radius: 3px;
+    cursor: none;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 0 0 var(--green);
+  }
+  .btn-ghost:hover {
+    box-shadow: inset 0 0 30px rgba(16,163,127,0.2), 0 0 30px rgba(16,163,127,0.3);
+    color: var(--green-bright);
+    border-color: var(--green-bright);
+    transform: translateY(-2px);
+  }
+
+  /* Scrolling ticker tape */
+  .ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: rgba(16,163,127,0.08);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0.7rem 0;
+    white-space: nowrap;
+  }
+  .ticker-content {
+    display: inline-block;
+    animation: ticker 28s linear infinite;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Sections */
+  section {
+    padding: 6rem 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 5px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fff 30%, var(--green-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media(max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+
+  .about-text p {
+    color: rgba(200,255,232,0.7);
+    line-height: 1.9;
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .about-text p strong { color: var(--green-bright); font-weight: 700; }
+
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+  }
+
+  .robot-face {
+    font-size: 5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--green));
+    line-height: 1;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-12px) rotate(3deg); }
+  }
+
+  .quote-box {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    border-left: 2px solid var(--green);
+    padding-left: 1rem;
+    line-height: 1.8;
+    margin-top: 1.5rem;
+  }
+
+  /* TOKENOMICS */
+  .scam-nomics-title {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .token-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .token-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(16,163,127,0.08), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .token-card:hover { border-color: var(--green); transform: translateY(-6px); }
+  .token-card:hover::after { opacity: 1; }
+
+  .token-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: drop-shadow(0 0 10px var(--green));
+  }
+  .token-value {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--green-bright);
+    text-shadow: 0 0 20px var(--green);
+    margin-bottom: 0.4rem;
+  }
+  .token-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 3px;
+    color: rgba(200,255,232,0.5);
+    text-transform: uppercase;
+  }
+  .token-desc {
+    font-size: 0.82rem;
+    color: rgba(200,255,232,0.4);
+    margin-top: 0.7rem;
+    line-height: 1.6;
+  }
+
+  /* CHART */
+  .chart-section {
+    text-align: center;
+  }
+  .chart-embed {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 2.5rem;
+  }
+  .chart-embed::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 49.5%, rgba(16,163,127,0.06) 50%, transparent 50.5%),
+      linear-gradient(0deg,  transparent 49.5%, rgba(16,163,127,0.06) 50%, transparent 50.5%);
+    background-size: 60px 60px;
+  }
+  .chart-placeholder {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+  .chart-placeholder p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-top: 1rem;
+    opacity: 0.7;
+  }
+  /* Fake chart line animation */
+  .fake-chart-svg { width: 100%; max-width: 600px; }
+
+  /* ROADMAP / DISCLAIMER */
+  .disclaimer-box {
+    background: var(--card);
+    border: 1px solid rgba(16,163,127,0.15);
+    border-radius: 8px;
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .disclaimer-box::before {
+    content: '⚠️ OFFICIAL DISCLAIMER ⚠️';
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--green);
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+  }
+  .disclaimer-box p {
+    color: rgba(200,255,232,0.5);
+    font-size: 0.85rem;
+    line-height: 1.9;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .disclaimer-box p strong { color: rgba(200,255,232,0.8); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem;
+    text-align: center;
+  }
+  footer .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--green);
+    text-shadow: 0 0 20px var(--green);
+    margin-bottom: 0.7rem;
+  }
+  footer p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(200,255,232,0.3);
+    letter-spacing: 2px;
+  }
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+    margin: 0 auto;
+    opacity: 0.5;
+  }
+
+  /* Glitch text */
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    background: linear-gradient(135deg, #fff 30%, var(--green-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glitch::before {
+    animation: glitch-1 3.5s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+  }
+  .glitch::after {
+    animation: glitch-2 3.5s infinite;
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch-1 {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px, 1px); opacity: 1; }
+    94% { transform: translate(3px, -1px); opacity: 1; }
+    96% { transform: translate(0); opacity: 0; }
+  }
+  @keyframes glitch-2 {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    91% { transform: translate(3px, 2px); opacity: 1; }
+    93% { transform: translate(-3px, -2px); opacity: 1; }
+    95% { transform: translate(0); opacity: 0; }
+  }
+
+  /* Animated border */
+  .border-anim {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .border-anim::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(from 0deg, transparent 0deg, var(--green) 60deg, transparent 120deg);
+    border-radius: 9px;
+    animation: spin-border 4s linear infinite;
+    z-index: -1;
+  }
+  @keyframes spin-border {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: rgba(200,255,232,0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+  .scroll-arrow {
+    width: 20px; height: 20px;
+    border-right: 1.5px solid rgba(16,163,127,0.4);
+    border-bottom: 1.5px solid rgba(16,163,127,0.4);
+    transform: rotate(45deg);
+  }
+  @keyframes bounce-subtle {
+    0%,100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+
+  /* Stat counter */
+  .live-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+  .live-stat {
+    text-align: center;
+  }
+  .live-stat-val {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--green-bright);
+    text-shadow: 0 0 15px var(--green);
+  }
+  .live-stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: rgba(200,255,232,0.4);
+    margin-top: 0.25rem;
+  }
+
+  /* Highlight tag */
+  .tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    background: rgba(16,163,127,0.07);
+    margin-right: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Hide scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
+
+  /* GSAP initial states */
+  .fade-up { opacity: 0; transform: translateY(40px); }
+  .fade-in { opacity: 0; }
+
+  @media(max-width: 640px) {
+    nav .nav-links { display: none; }
+    .hero-btns { flex-direction: column; align-items: center; }
+    .live-stats { gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Neural background canvas -->
+<canvas id="neural-bg"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">$SCAM</div>
+  <div class="nav-links" style="display:flex;gap:0.5rem;">
+    <a href="#about">ABOUT</a>
+    <a href="#tokenomics">TOKENOMICS</a>
+    <a href="#chart">CHART</a>
+    <a href="https://t.me/" target="_blank">TELEGRAM</a>
+  </div>
+  <a href="#" class="btn-primary" style="font-size:0.7rem;padding:0.6rem 1.2rem;">BUY $SCAM</a>
+</nav>
+
+<!-- HERO -->
+<div class="content">
+<section id="hero">
+  <div class="fade-in">
+    <div class="hero-badge">⚡ SOLANA MEMECOIN · SEASON ∞</div>
+  </div>
+  <h1 class="hero-title glitch fade-up" data-text="SCAM ALTMAN" style="margin-bottom:0.5rem;">SCAM ALTMAN</h1>
+  <div class="hero-ticker fade-in">$SCAM</div>
+  <p class="hero-sub fade-up">
+    The <em>World ID</em> you actually want.<br/>
+    <em>0% Intelligence.</em> 100% Gains.
+  </p>
+
+  <div class="live-stats fade-up">
+    <div class="live-stat">
+      <div class="live-stat-val" id="stat-holders">0</div>
+      <div class="live-stat-label">HOLDERS</div>
+    </div>
+    <div class="live-stat">
+      <div class="live-stat-val">$0.00</div>
+      <div class="live-stat-label">PRICE (GOING UP ONLY)</div>
+    </div>
+    <div class="live-stat">
+      <div class="live-stat-val" id="stat-mc">$0</div>
+      <div class="live-stat-label">MARKET CAP</div>
+    </div>
+    <div class="live-stat">
+      <div class="live-stat-val">∞</div>
+      <div class="live-stat-label">VIBES</div>
+    </div>
+  </div>
+
+  <div class="hero-btns fade-up">
+    <a href="#" class="btn-primary">🚀 Buy on Raydium</a>
+    <a href="https://t.me/" target="_blank" class="btn-ghost">✈️ Join the Scam Telegram</a>
+  </div>
+
+  <div class="scroll-hint fade-in">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="ticker-content">
+    🟢 $SCAM +9999% &nbsp;&nbsp;&nbsp; 🤖 SAM IS BUSY. SCAM IS HERE. &nbsp;&nbsp;&nbsp; 💰 LP BURNED &nbsp;&nbsp;&nbsp; 🔐 CONTRACT RENOUNCED &nbsp;&nbsp;&nbsp; 🌍 WORLD ID: DEGENS ONLY &nbsp;&nbsp;&nbsp; 🚀 TO THE MOON (REALLY THIS TIME) &nbsp;&nbsp;&nbsp; 🟢 $SCAM +9999% &nbsp;&nbsp;&nbsp; 🤖 SAM IS BUSY. SCAM IS HERE. &nbsp;&nbsp;&nbsp; 💰 LP BURNED &nbsp;&nbsp;&nbsp; 🔐 CONTRACT RENOUNCED &nbsp;&nbsp;&nbsp; 🌍 WORLD ID: DEGENS ONLY &nbsp;&nbsp;&nbsp; 🚀 TO THE MOON (REALLY THIS TIME) &nbsp;&nbsp;&nbsp;
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about" style="max-width:1100px;margin:0 auto;">
+  <div class="about-grid">
+    <div class="about-text">
+      <div class="section-label">// ORIGIN_STORY.exe</div>
+      <h2 class="section-title fade-up">What is<br/>Scam Altman?</h2>
+      <div class="fade-up">
+        <p>
+          <strong>Sam Altman</strong> was too busy rewriting GPT-5's system prompt for the 47th time, so his evil twin brother,
+          <strong>Scam Altman</strong>, escaped the simulation and launched a meme coin.
+        </p>
+        <p>
+          He doesn't need a <strong>World ID</strong>. He doesn't need a board of directors.
+          He doesn't even need an <em>actual product.</em>
+          He just needs your SOL — and your undying, irrational belief.
+        </p>
+        <p>
+          Scam Altman is <strong>100% community-driven</strong>, which means we're all equally responsible for this beautiful disaster.
+          The tokenomics are transparent, the LP is burned, and the dev wallet is… probably fine. <em>Probably.</em>
+        </p>
+        <div style="margin-top:1.5rem;">
+          <span class="tag">SOLANA NATIVE</span>
+          <span class="tag">NO VC DUMPS</span>
+          <span class="tag">COMMUNITY OWNED</span>
+          <span class="tag">PEER-REVIEWED MEMES</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <div class="border-anim">
+        <div class="about-card" style="background:var(--card);">
+          <div class="robot-face">🤖</div>
+          <div style="text-align:center;font-family:'Orbitron',monospace;font-weight:900;color:var(--green-bright);font-size:1.1rem;letter-spacing:2px;text-shadow:0 0 15px var(--green);">
+            SCAM ALTMAN<br/>
+            <span style="font-size:0.65rem;opacity:0.6;font-family:'Share Tech Mono',monospace;">Version: FINAL (we promise)</span>
+          </div>
+
+          <div class="quote-box">
+            <div style="margin-bottom:0.5rem;opacity:0.5;font-size:0.7rem;letter-spacing:2px;">// SCAM_STATEMENT.txt</div>
+            "We believe AGI is 18 months away. So is this coin hitting $1.
+            Trust the process. Trust the Scam."
+          </div>
+
+          <div style="margin-top:1.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+            <div style="background:rgba(16,163,127,0.07);border:1px solid var(--border);border-radius:4px;padding:0.8rem;text-align:center;">
+              <div style="font-family:'Orbitron',monospace;font-weight:900;color:var(--green-bright);font-size:1.1rem;">0%</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:2px;color:rgba(200,255,232,0.4);margin-top:0.2rem;">INTELLIGENCE</div>
+            </div>
+            <div style="background:rgba(16,163,127,0.07);border:1px solid var(--border);border-radius:4px;padding:0.8rem;text-align:center;">
+              <div style="font-family:'Orbitron',monospace;font-weight:900;color:var(--green-bright);font-size:1.1rem;">100%</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:2px;color:rgba(200,255,232,0.4);margin-top:0.2rem;">CONVICTION</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOKENOMICS -->
+<section id="tokenomics" style="max-width:1100px;margin:0 auto;">
+  <div class="scam-nomics-title fade-up">
+    <div class="section-label" style="text-align:center;">// SCAM_NOMICS.sol</div>
+    <h2 class="section-title" style="text-align:center;">Scam-nomics</h2>
+    <p style="color:rgba(200,255,232,0.5);max-width:520px;margin:0 auto;font-size:0.95rem;line-height:1.8;">
+      Engineered by our team of absolutely imaginary PhDs.<br/>
+      Peer-reviewed by zero institutions. Approved by vibes only.
+    </p>
+  </div>
+
+  <div class="token-grid">
+    <div class="token-card fade-up">
+      <span class="token-icon">💎</span>
+      <div class="token-value">1B</div>
+      <div class="token-label">Total Supply</div>
+      <div class="token-desc">1,000,000,000 $SCAM. A classic. Round number. Very professional.</div>
+    </div>
+    <div class="token-card fade-up">
+      <span class="token-icon">🔥</span>
+      <div class="token-value">0%</div>
+      <div class="token-label">Buy/Sell Tax</div>
+      <div class="token-desc">We don't tax you. Raydium does. We're the good guys here.</div>
+    </div>
+    <div class="token-card fade-up">
+      <span class="token-icon">🔐</span>
+      <div class="token-value">BURNED</div>
+      <div class="token-label">LP Status</div>
+      <div class="token-desc">Gone. Incinerated. Like Sam's GPT-2 source code. RIP.</div>
+    </div>
+    <div class="token-card fade-up">
+      <span class="token-icon">🤝</span>
+      <div class="token-value">RENOUNCED</div>
+      <div class="token-label">Contract Ownership</div>
+      <div class="token-desc">The dev said "yours now" and logged off to touch grass. Allegedly.</div>
+    </div>
+    <div class="token-card fade-up">
+      <span class="token-icon">🌍</span>
+      <div class="token-value">100%</div>
+      <div class="token-label">Community Owned</div>
+      <div class="token-desc">No VCs. No angels. Just degenerates with a dream and a wallet.</div>
+    </div>
+    <div class="token-card fade-up">
+      <span class="token-icon">📈</span>
+      <div class="token-value">∞</div>
+      <div class="token-label">Price Target</div>
+      <div class="token-desc">This is not financial advice. But also… we're right.</div>
+    </div>
+  </div>
+
+  <!-- Distribution bar -->
+  <div class="fade-up" style="margin-top:3rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2.5rem;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:3px;color:rgba(200,255,232,0.5);margin-bottom:1.5rem;">TOKEN DISTRIBUTION</div>
+    <div style="display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:1.2rem;">
+      <div style="width:50%;background:var(--green);box-shadow:0 0 15px rgba(16,163,127,0.6);border-radius:7px 0 0 7px;"></div>
+      <div style="width:25%;background:rgba(16,163,127,0.4);"></div>
+      <div style="width:15%;background:rgba(16,163,127,0.2);"></div>
+      <div style="width:10%;background:rgba(16,163,127,0.1);border-radius:0 7px 7px 0;"></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:1.5rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:rgba(200,255,232,0.6);">50% — LIQUIDITY POOL (BURNED)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div style="width:10px;height:10px;border-radius:50%;background:rgba(16,163,127,0.4);"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:rgba(200,255,232,0.6);">25% — COMMUNITY / AIRDROPS</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div style="width:10px;height:10px;border-radius:50%;background:rgba(16,163,127,0.2);"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:rgba(200,255,232,0.6);">15% — MARKETING</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div style="width:10px;height:10px;border-radius:50%;background:rgba(16,163,127,0.1);"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:rgba(200,255,232,0.6);">10% — DEV (LOCKED FOREVER*) <br/><em style="opacity:0.4;">*in their heart</em></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CHART -->
+<section id="chart" style="max-width:1100px;margin:0 auto;" class="chart-section">
+  <div class="section-label" style="text-align:center;" class="fade-up">// DEXSCREENER_EMBED</div>
+  <h2 class="section-title fade-up" style="text-align:center;">Live Chart</h2>
+  <p style="color:rgba(200,255,232,0.5);font-size:0.9rem;max-width:480px;margin:0 auto 0.5rem;" class="fade-up">
+    Replace the iframe below with your Dexscreener embed URL after launch.
+  </p>
+
+  <div class="chart-embed fade-up">
+    <!-- Replace this with your Dexscreener iframe: -->
+    <!-- <iframe src="https://dexscreener.com/solana/YOUR_PAIR_ADDRESS?embed=1&theme=dark&trades=0&info=0" style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe> -->
+    <div class="chart-placeholder">
+      <div style="font-size:4rem;filter:drop-shadow(0 0 20px var(--green));">📊</div>
+      <p>CHART LOADING...<br/>PASTE DEXSCREENER EMBED BELOW</p>
+      <!-- Animated fake chart line -->
+      <svg class="fake-chart-svg" viewBox="0 0 600 120" style="margin-top:1.5rem;opacity:0.4;">
+        <polyline
+          points="0,100 60,90 120,80 150,85 200,60 240,65 280,40 300,45 350,20 380,25 420,10 460,15 500,5 540,8 600,2"
+          fill="none"
+          stroke="#10a37f"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          style="filter:drop-shadow(0 0 6px #10a37f);"
+        />
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#10a37f" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#10a37f" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon
+          points="0,100 60,90 120,80 150,85 200,60 240,65 280,40 300,45 350,20 380,25 420,10 460,15 500,5 540,8 600,2 600,120 0,120"
+          fill="url(#chartGrad)"
+        />
+      </svg>
+    </div>
+  </div>
+
+  <!-- CTA buttons below chart -->
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2.5rem;" class="fade-up">
+    <a href="#" class="btn-primary" style="font-size:0.85rem;">🚀 Buy on Raydium</a>
+    <a href="https://t.me/" target="_blank" class="btn-ghost" style="font-size:0.85rem;">✈️ Join the Scam Telegram</a>
+    <a href="#" class="btn-ghost" style="font-size:0.85rem;">🐦 Follow on X (Twitter)</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DISCLAIMER -->
+<section style="max-width:900px;margin:0 auto;">
+  <div class="disclaimer-box fade-up">
+    <p>
+      <strong>$SCAM is a meme coin with no intrinsic value or financial return expectation.</strong>
+      This is a parody project and is not affiliated with Sam Altman, OpenAI, or any sentient AI system (yet).
+      Scam Altman is a fictional character. Any resemblance to real altcoins, living or dead, is purely coincidental and hilarious.
+      This is not financial advice. Do not invest more than you're willing to laugh about losing.
+      <strong>DYOR. NFA. WAGMI. Probably.</strong>
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">$SCAM</div>
+  <p style="margin-bottom:0.5rem;">SCAM ALTMAN — © 2024 — ALL RIGHTS RESERVED (NONE, REALLY)</p>
+  <p>"THE WORLD ID YOU ACTUALLY WANT. 0% INTELLIGENCE. 100% GAINS."</p>
+</footer>
+
+</div><!-- end .content -->
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─── Neural network background ─── */
+(function() {
+  const canvas = document.getElementById('neural-bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], mouse = { x: -999, y: -999 };
+  const N = 80, CONN_DIST = 150;
+  const GREEN = '#10a37f';
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for (let i = 0; i < N; i++) {
+    nodes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 2.5 + 1
+    });
+  }
+
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+
+      // Mouse repulsion
+      const dx = n.x - mouse.x, dy = n.y - mouse.y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 120) { n.x += dx / d * 1.5; n.y += dy / d * 1.5; }
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = GREEN;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = GREEN;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < CONN_DIST) {
+          const alpha = (1 - d / CONN_DIST) * 0.35;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(16,163,127,${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ─── Custom cursor ─── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+  ring.style.left   = rx + 'px';
+  ring.style.top    = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a, button, .token-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.transform = 'translate(-50%,-50%) scale(1.5)'; ring.style.opacity = '0.2'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.5'; });
+});
+
+/* ─── GSAP hero entrance ─── */
+const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+tl.from('.hero-badge',  { opacity:0, y:-20, duration:0.8, delay:0.3 })
+  .from('.hero-title',  { opacity:0, y:60, skewY:3, duration:1 }, '-=0.3')
+  .from('.hero-ticker', { opacity:0, scaleX:0.5, duration:0.6 }, '-=0.5')
+  .from('.hero-sub',    { opacity:0, y:30, duration:0.8 }, '-=0.4')
+  .from('.live-stats .live-stat', { opacity:0, y:20, stagger:0.12, duration:0.6 }, '-=0.5')
+  .from('.hero-btns a', { opacity:0, y:20, stagger:0.15, duration:0.6 }, '-=0.4')
+  .from('.scroll-hint', { opacity:0, duration:0.6 }, '-=0.2');
+
+/* ─── Scroll-triggered reveals ─── */
+gsap.utils.toArray('.fade-up').forEach(el => {
+  gsap.fromTo(el,
+    { opacity:0, y:50 },
+    { opacity:1, y:0, duration:0.9, ease:'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+    }
+  );
+});
+gsap.utils.toArray('.fade-in').forEach(el => {
+  gsap.fromTo(el,
+    { opacity:0 },
+    { opacity:1, duration:1.1, ease:'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+    }
+  );
+});
+
+/* ─── Stagger token cards ─── */
+gsap.from('.token-card', {
+  opacity:0, y:50, stagger:0.12, duration:0.8, ease:'power3.out',
+  scrollTrigger: { trigger:'.token-grid', start:'top 85%', once:true }
+});
+
+/* ─── Animated counters ─── */
+function animateCount(el, target, prefix='', suffix='') {
+  gsap.to({ val: 0 }, {
+    val: target,
+    duration: 2.5,
+    ease: 'power2.out',
+    onUpdate: function() {
+      el.textContent = prefix + Math.round(this.targets()[0].val).toLocaleString() + suffix;
+    },
+    scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+  });
+}
+animateCount(document.getElementById('stat-holders'), 4269, '', '+');
+animateCount(document.getElementById('stat-mc'), 420690, '$');
+
+/* ─── Navbar scroll effect ─── */
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.style.borderBottomColor = window.scrollY > 50 ? 'rgba(16,163,127,0.4)' : 'rgba(16,163,127,0.25)';
+  nav.style.background = window.scrollY > 50 ? 'rgba(6,13,10,0.92)' : 'rgba(6,13,10,0.7)';
+});
+
+/* ─── Token card hover glow ─── */
+document.querySelectorAll('.token-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    card.style.setProperty('--mx', x + 'px');
+    card.style.setProperty('--my', y + 'px');
+  });
+});
+
+/* ─── Chart SVG path draw animation ─── */
+ScrollTrigger.create({
+  trigger: '#chart',
+  start: 'top 80%',
+  once: true,
+  onEnter: () => {
+    const poly = document.querySelector('.fake-chart-svg polyline');
+    if (!poly) return;
+    const len = poly.getTotalLength ? 800 : 800;
+    gsap.fromTo(poly, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 2.5, ease: 'power2.out' });
+    gsap.from('.fake-chart-svg polygon', { opacity: 0, duration: 1.5, delay: 0.5 });
+  }
+});
+</script>
+</body>
+</html>
